@@ -25,6 +25,7 @@ getLocations =() =>{
 
   }
 }
+//https://www.npmjs.com/package/axios
 axios.get(endPoint + new URLSearchParams(parameters))
   .then(response => {
     console.log(response);
