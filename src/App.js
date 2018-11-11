@@ -1,16 +1,24 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import axios from 'axios'
+import axios from 'axios';
+import Header from './Components/Header'
+//import Map from './Components/Map'
 
 class App extends Component {
 
   state = {
-    Locations : []
+    Locations : [],
+    marker: []
   }
+   
  componentDidMount() {
  
-    this.loadMap ()
+    this.getLocations ()
+    this.loadMap()
+   
+
+    
   }
 
 loadMap = () =>{
@@ -19,12 +27,12 @@ loadMap = () =>{
 }
 
 getLocations =() =>{
-  let endPoint = "https://api.foursquare.com/v2/venues/VENUE_ID"
+  let endPoint = "https://api.foursquare.com/v2/venues/explore?"
   let parameters ={
     client_id : "3DEZHRZWRFFGS3PQ1JRIL2Q00CUEVRXQO4Q2NXU2JQKJI1NF",
     client_secret:"2V3CBVWDXWDIW4HBIO5SFBZQDF0544F04I40CIBU5ZYQLMSY",
-    query:"Mall",
-    near: "Waimea, HI",
+    query:"shops",
+    near: "Mauna Kea",
     v: 20181105
 
   }
@@ -33,7 +41,7 @@ axios.get(endPoint + new URLSearchParams(parameters))
   .then(response => {
    this.setState({
     Locations: response.data.response.groups[0].items
-   })
+   }, this.loadMap ())
   })
   .catch(error => {
     console.log(error);
@@ -45,28 +53,46 @@ axios.get(endPoint + new URLSearchParams(parameters))
 //https://developers.google.com/maps/documentation/javascript/tutorial
 
 initMap = () => {
-       const  map = new window. google.maps.Map(document.getElementById('map'), {
-          center: {lat: 19.8968, lng: -155.5828},
-          zoom: 8
+        const map = new window.google.maps.Map(document.getElementById('map'), {
+            center: { lat: 19.8968, lng: -155.5828 },
+            zoom: 10
         });
-       //https://developers.google.com/maps/documentation/javascript/markers
-var marker = new window.google.maps.Marker({
-    map: map,
-    draggable: true,
-    animation: window.google.maps.Animation.Drop,
-     position: {lat: 19.8968, lng: -155.5828},
-    title: 'Hello World!'
-  });
-maker.addlistener('click', toggleBounce);
-}
-function toggleBounce(){
-  if (marker.getAnimation() !== null) {
-    marker.setAnimation(null);
-  }else{
-    marker.setAnimation(window.google.maps.Animation.BOUNCE);
-  }
-}
+        //https://developers.google.com/maps/documentation/javascript/markers
+ var Infowindow = new window.google.maps.Infowindow()
 
+ addMarkers locations => {
+  let maaker : []
+
+
+  for (var i = 0; i < locations.length; i++) {
+    let marker = new window.google.maps.Marker({
+      position: { lat: mylocations.venue.location.lat, lng: mylocations.venue.location.lng},
+      map: map,
+
+    })
+     //push the marker to our array of markers
+           markers.push(marker);
+           // create an onclick event to open an infowindow at each marker. 
+           marker.addListener('click', function(){
+            populateInfoWindow(this, Infowindow);
+           })
+  }
+    function populateInfoWindow(marker, infowindow) {
+          if (infowindow.marker !=marker) {
+            infowindow.marker = marker;
+            infowindow.setContent('<div>' + marker.title + '</div');
+            infowindow.open(map, marker);
+            //
+            infowindow.addListener('click', function(){
+              infowindow.setMarker(null);
+            })
+          }
+      
+        }
+
+}
+  
+    };
 
 
 
@@ -74,7 +100,14 @@ function toggleBounce(){
   render() {
     return (
 
-       <main>
+      //<div clasName="App">
+      //<Header/>
+     // <Map/>
+
+
+     // </div>
+
+     <main>
         <div id="map"></div>
      </main>
       
