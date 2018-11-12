@@ -3,7 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
 import Header from './Components/Header'
-//import Map from './Components/Map'
+import Map from './Components/Map'
 
 class App extends Component {
 
@@ -16,7 +16,8 @@ class App extends Component {
  
     this.getLocations ()
     this.loadMap()
-   
+    
+
 
     
   }
@@ -58,40 +59,38 @@ initMap = () => {
             zoom: 10
         });
         //https://developers.google.com/maps/documentation/javascript/markers
- var Infowindow = new window.google.maps.Infowindow()
 
- addMarkers locations => {
-  let maaker : []
+        const Infowindow = new window.google.maps.InfoWindow();
 
+        let markers = [];
 
-  for (var i = 0; i < locations.length; i++) {
-    let marker = new window.google.maps.Marker({
-      position: { lat: mylocations.venue.location.lat, lng: mylocations.venue.location.lng},
-      map: map,
-
-    })
-     //push the marker to our array of markers
-           markers.push(marker);
-           // create an onclick event to open an infowindow at each marker. 
-           marker.addListener('click', function(){
-            populateInfoWindow(this, Infowindow);
-           })
-  }
-    function populateInfoWindow(marker, infowindow) {
-          if (infowindow.marker !=marker) {
-            infowindow.marker = marker;
-            infowindow.setContent('<div>' + marker.title + '</div');
-            infowindow.open(map, marker);
-            //
-            infowindow.addListener('click', function(){
-              infowindow.setMarker(null);
-            })
-          }
-      
+        this.state.Locations.forEach(location => {
+            let marker = new window.google.maps.Marker({
+                title: location.venue.name,
+                position: {
+                    lat: location.venue.location.lat,
+                    lng: location.venue.location.lng
+                },
+                map: map
+            });
+            //push the marker to our array of markers
+            markers.push(marker);
+            // create an onclick event to open an infowindow at each marker.
+            marker.addListener('click', function() {
+                populateInfoWindow(this, Infowindow);
+            });
+        });
+        function populateInfoWindow(marker, infowindow) {
+            if (infowindow.marker !== marker) {
+                infowindow.marker = marker;
+                infowindow.setContent('<div>' + marker.title + '</div');
+                infowindow.open(map, marker);
+                //
+                infowindow.addListener('click', function() {
+                    infowindow.setMarker(null);
+                });
+            }
         }
-
-}
-  
     };
 
 
@@ -102,14 +101,25 @@ initMap = () => {
 
       //<div clasName="App">
       //<Header/>
-     // <Map/>
+     //<Map/>
 
 
      // </div>
 
-     <main>
-        <div id="map"></div>
+     <div className="App" >
+     <Header/>
+      <main>
+        <div id="map">
+
+
+        </div>
+
      </main>
+
+
+     </div>
+
+     
       
     );
   }
